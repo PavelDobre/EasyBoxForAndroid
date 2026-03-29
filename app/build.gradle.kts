@@ -36,6 +36,11 @@ android {
     androidResources {
         generateLocaleConfig = true
     }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
 }
 
 dependencies {

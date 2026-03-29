@@ -16,16 +16,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Title -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/title_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardElevation="2dp">
@@ -54,16 +55,18 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- About cards (MaterialAboutFragment) -->
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/about_fragment_holder"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
+            <!-- License block
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:cardElevation="2dp">
 
@@ -79,23 +82,28 @@
                         android:text="@string/license"
                         android:textAppearance="?attr/textAppearanceSubtitle2" />
 
-                    <TextView
-                        android:id="@+id/license"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:textColorSecondary"
-                        android:textIsSelectable="true"
-                        android:textSize="12sp" />
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:id="@+id/license"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:textColorSecondary"
+                            android:textIsSelectable="true"
+                            android:textSize="12sp" />
+
+                    </ScrollView>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
+-->
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 </LinearLayout>

@@ -9,8 +9,6 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import java.io.IOException
 import java.sql.SQLException
-import java.util.*
-
 
 object ProfileManager {
 
@@ -185,52 +183,53 @@ object ProfileManager {
         var rules = SagerDatabase.rulesDao.allRules()
         if (rules.isEmpty() && !DataStore.rulesFirstCreate) {
             DataStore.rulesFirstCreate = true
+
             createRule(
                 RuleEntity(
                     name = app.getString(R.string.route_opt_block_quic),
                     port = "443",
                     network = "udp",
-                    outbound = -2
+                    outbound = -2,
+                    enabled = true
                 )
             )
+
             createRule(
                 RuleEntity(
                     name = app.getString(R.string.route_opt_block_ads),
                     domains = "geosite:category-ads-all",
-                    outbound = -2
+                    outbound = -2,
+                    enabled = true
                 )
             )
-            val fuckedCountry = mutableListOf("cn:中国")
-            if (Locale.getDefault().country != Locale.CHINA.country) {
-                // 非中文用户
-                fuckedCountry += "ir:Iran"
-                fuckedCountry += "ru:Russia"
-            }
-            for (c in fuckedCountry) {
-                val country = c.substringBefore(":")
-                val displayCountry = c.substringAfter(":")
-                //
-                if (country == "cn") createRule(
-                    RuleEntity(
-                        name = app.getString(R.string.route_play_store, displayCountry),
-                        domains = "googleapis.cn",
-                    ), false
-                )
-                createRule(
-                    RuleEntity(
-                        name = app.getString(R.string.route_bypass_domain, displayCountry),
-                        domains = "geosite:$country",
-                        outbound = -1
-                    ), false
-                )
-                createRule(
-                    RuleEntity(
-                        name = app.getString(R.string.route_bypass_ip, displayCountry),
-                        ip = "geoip:$country",
-                        outbound = -1
-                    ), false
-                )
-            }
+
+            createRule(
+                RuleEntity(
+                    name = "Bypass domain zones",
+                    domains = """
+                    .ru
+                    .su
+                    .by
+                    .cn
+                    .xn--p1ai
+                    .xn--p1acf
+                """.trimIndent(),
+                    outbound = -1,
+                    enabled = true
+                ),
+                false
+            )
+
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_bypass_ip, "Russia"),
+                    ip = "geoip:ru",
+                    outbound = -1,
+                    enabled = true
+                ),
+                false
+            )
+
             rules = SagerDatabase.rulesDao.allRules()
         }
         return rules

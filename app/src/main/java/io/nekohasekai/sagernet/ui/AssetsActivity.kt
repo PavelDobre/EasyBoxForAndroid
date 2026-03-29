@@ -261,14 +261,14 @@ class AssetsActivity : ThemedActivity() {
             "SagerNet/sing-geosite",
         ),
         RuleAssetsProvider(
+            "L11R/antizapret-sing-box-geo"
+        ),
+        RuleAssetsProvider(
             "soffchen/sing-geoip",
             "soffchen/sing-geosite",
         ),
         RuleAssetsProvider(
             "Chocolate4U/Iran-sing-box-rules"
-        ),
-        RuleAssetsProvider(
-            "L11R/antizapret-sing-box-geo"
         ),
     )
 
@@ -338,7 +338,7 @@ class AssetsActivity : ThemedActivity() {
     }
 
     override fun onBackPressed() {
-        finish()
+        super.onBackPressed()
     }
 
     override fun onResume() {

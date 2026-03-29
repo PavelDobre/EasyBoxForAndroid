@@ -8,7 +8,6 @@ import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.util.Base64
 import java.util.Properties
-import kotlin.system.exitProcess
 
 private val Project.android get() = extensions.getByName<ApplicationExtension>("android")
 
@@ -24,15 +23,16 @@ fun Project.requireMetadata(): Properties {
     return metadata
 }
 
+@Suppress("NewApi")
 fun Project.requireLocalProperties(): Properties {
     if (!::localProperties.isInitialized) {
         localProperties = Properties()
 
         val base64 = System.getenv("LOCAL_PROPERTIES")
         if (!base64.isNullOrBlank()) {
-
-            localProperties.load(Base64.getDecoder().decode(base64).inputStream())
-        } else if (project.rootProject.file("local.properties").exists()) {
+            val decoded = java.util.Base64.getDecoder().decode(base64)
+            localProperties.load(decoded.inputStream())
+        } else if (rootProject.file("local.properties").exists()) {
             localProperties.load(rootProject.file("local.properties").inputStream())
         }
     }
@@ -43,22 +43,27 @@ fun Project.setupCommon() {
     android.apply {
         buildToolsVersion = "35.0.1"
         compileSdk = 35
+
         defaultConfig {
             minSdk = 21
             targetSdk = 35
         }
+
         buildTypes {
             getByName("release") {
                 isMinifyEnabled = true
             }
         }
+
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
+
         (android as ExtensionAware).extensions.getByName<KotlinJvmOptions>("kotlinOptions").apply {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
+
         lint {
             showAll = true
             checkAllWarnings = true
@@ -67,6 +72,7 @@ fun Project.setupCommon() {
             textOutput = project.file("build/lint.txt")
             htmlOutput = project.file("build/lint.html")
         }
+
         packaging {
             resources.excludes.addAll(
                 listOf(
@@ -84,6 +90,7 @@ fun Project.setupCommon() {
                 )
             )
         }
+
         (this as? AbstractAppExtension)?.apply {
             buildTypes {
                 getByName("release") {
@@ -93,17 +100,20 @@ fun Project.setupCommon() {
                         isMinifyEnabled = false
                     }
                 }
+
                 getByName("debug") {
-                    applicationIdSuffix = "debug"
+                    applicationIdSuffix = ".debug"
                     debuggable(true)
                     jniDebuggable(true)
                 }
             }
+
             applicationVariants.forEach { variant ->
                 variant.outputs.forEach {
                     it as BaseVariantOutputImpl
                     it.outputFileName = it.outputFileName.replace(
-                        "app", "${project.name}-" + variant.versionName
+                        "app",
+                        "${project.name}-${variant.versionName}"
                     ).replace("-release", "").replace("-oss", "")
                 }
             }
@@ -130,6 +140,7 @@ fun Project.setupAppCommon() {
                 }
             }
         }
+
         buildTypes {
             val key = signingConfigs.findByName("release")
             if (key != null) {
@@ -141,9 +152,11 @@ fun Project.setupAppCommon() {
 }
 
 fun Project.setupApp() {
-    val pkgName = requireMetadata().getProperty("PACKAGE_NAME")
-    val verName = requireMetadata().getProperty("VERSION_NAME")
-    val verCode = (requireMetadata().getProperty("VERSION_CODE").toInt()) * 5
+    val pkgName = "com.easybox.app"
+    val verName = "1.0.2"
+    val verCode = 49
+    val preVerName = "preview-1.0.2"
+
     android.apply {
         defaultConfig {
             applicationId = pkgName
@@ -152,6 +165,7 @@ fun Project.setupApp() {
             buildConfigField("String", "PRE_VERSION_NAME", "\"\"")
         }
     }
+
     setupAppCommon()
 
     android.apply {
@@ -185,7 +199,7 @@ fun Project.setupApp() {
                 buildConfigField(
                     "String",
                     "PRE_VERSION_NAME",
-                    "\"${requireMetadata().getProperty("PRE_VERSION_NAME")}\""
+                    "\"$preVerName\""
                 )
             }
         }
@@ -195,12 +209,10 @@ fun Project.setupApp() {
                 this as BaseVariantOutputImpl
                 val isPreview = outputFileName.contains("-preview")
                 outputFileName = if (isPreview) {
-                    outputFileName.replace(
-                        project.name,
-                        "NekoBox-" + requireMetadata().getProperty("PRE_VERSION_NAME")
-                    ).replace("-preview", "")
+                    outputFileName.replace(project.name, "EasyBox-$preVerName")
+                        .replace("-preview", "")
                 } else {
-                    outputFileName.replace(project.name, "NekoBox-$versionName")
+                    outputFileName.replace(project.name, "EasyBox-$versionName")
                         .replace("-release", "")
                         .replace("-oss", "")
                 }
@@ -208,7 +220,7 @@ fun Project.setupApp() {
         }
 
         for (abi in listOf("Arm64", "Arm", "X64", "X86")) {
-            tasks.create("assemble" + abi + "FdroidRelease") {
+            tasks.create("assemble${abi}FdroidRelease") {
                 dependsOn("assembleFdroidRelease")
             }
         }

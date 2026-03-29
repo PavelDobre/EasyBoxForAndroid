@@ -129,7 +129,7 @@ class MainActivity : ThemedActivity(),
     fun refreshNavMenu(clashApi: Boolean) {
         if (::navigation.isInitialized) {
             navigation.menu.findItem(R.id.nav_traffic)?.isVisible = clashApi
-            navigation.menu.findItem(R.id.nav_tuiguang)?.isVisible = !isPlay
+            // navigation.menu.findItem(R.id.nav_tuiguang)?.isVisible = !isPlay
         }
     }
 
@@ -191,7 +191,7 @@ class MainActivity : ThemedActivity(),
 
         onMainDispatcher {
 
-            displayFragmentWithId(R.id.nav_group)
+           // displayFragmentWithId(R.id.nav_group)
 
             MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.subscription_import)
                 .setMessage(getString(R.string.subscription_import_message, name))
@@ -334,22 +334,22 @@ class MainActivity : ThemedActivity(),
                 displayFragment(ConfigurationFragment())
             }
 
-            R.id.nav_group -> displayFragment(GroupFragment())
+            //R.id.nav_group -> displayFragment(GroupFragment())
             R.id.nav_route -> displayFragment(RouteFragment())
             R.id.nav_settings -> displayFragment(SettingsFragment())
             R.id.nav_traffic -> displayFragment(WebviewFragment())
             R.id.nav_tools -> displayFragment(ToolsFragment())
             R.id.nav_logcat -> displayFragment(LogcatFragment())
-            R.id.nav_faq -> {
-                launchCustomTab("https://matsuridayo.github.io/")
-                return false
-            }
+//            R.id.nav_faq -> {
+ //               launchCustomTab("https://matsuridayo.github.io/")
+  //              return false
+   //         }
 
             R.id.nav_about -> displayFragment(AboutFragment())
-            R.id.nav_tuiguang -> {
-                launchCustomTab("https://neko-box.pages.dev/喵")
-                return false
-            }
+//            R.id.nav_tuiguang -> {
+ //               launchCustomTab("https://neko-box.pages.dev/喵")
+  //              return false
+   //         }
 
             else -> return false
         }
