@@ -447,7 +447,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 startFilesForResult(importFile, "*/*")
             }
 
-            R.id.action_new_socks -> {
+     /*       R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
             }
 
@@ -516,7 +516,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
-
+*/
             R.id.action_update_subscription -> {
                 if (showAllProfilesMode) {
                     MaterialAlertDialogBuilder(requireContext())

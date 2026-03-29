@@ -154,7 +154,7 @@ fun Project.setupAppCommon() {
 fun Project.setupApp() {
     val pkgName = "com.easybox.app"
     val verName = "1.0.2"
-    val verCode = 49
+    val verCode = 50
     val preVerName = "preview-1.0.2"
 
     android.apply {
