@@ -77,12 +77,37 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         return group
     }
 
-    fun selectedGroupForImport(): Long {
+    /* fun selectedGroupForImport(): Long {
         val current = currentGroup()
         if (current.type == GroupType.BASIC) return current.id
         val groups = SagerDatabase.groupDao.allGroups()
         return groups.find { it.type == GroupType.BASIC }!!.id
     }
+*/
+    fun selectedGroupForImport(): Long {
+        val current = try {
+            currentGroup()
+        } catch (_: Exception) {
+            null
+        }
+
+        if (current != null && current.type == GroupType.BASIC) {
+            return current.id
+        }
+
+        val groups = SagerDatabase.groupDao.allGroups()
+        val basicGroup = groups.find { it.type == GroupType.BASIC }
+        if (basicGroup != null) {
+            return basicGroup.id
+        }
+
+        val newGroup = ProxyGroup(
+            type = GroupType.BASIC,
+            name = "Profiles"
+        )
+        return SagerDatabase.groupDao.createGroup(newGroup)
+    }
+
 
     var appTLSVersion by configurationStore.string(Key.APP_TLS_VERSION)
     var enableClashAPI by configurationStore.boolean(Key.ENABLE_CLASH_API)

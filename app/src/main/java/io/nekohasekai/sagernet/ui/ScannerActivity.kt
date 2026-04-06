@@ -104,11 +104,7 @@ class ScannerActivity : ThemedActivity(),
     var finished = AtomicBoolean(false)
     var importedN = AtomicInteger(0)
 
-    /**
-     * 接收扫码结果回调
-     * @param result 扫码结果
-     * @return 返回true表示拦截，将不自动执行后续逻辑，为false表示不拦截，默认不拦截
-     */
+
     override fun onScanResultCallback(result: Result?): Boolean {
         return onScanResultCallback(result, false)
     }
