@@ -10,6 +10,7 @@ import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import java.io.IOException
 import java.sql.SQLException
 
+
 object ProfileManager {
 
     interface Listener {
@@ -102,6 +103,7 @@ object ProfileManager {
         }
     }
 
+
     suspend fun deleteProfile(groupId: Long, profileId: Long) {
         if (SagerDatabase.proxyDao.deleteById(profileId) == 0) return
         if (DataStore.selectedProxy == profileId) {
@@ -112,6 +114,7 @@ object ProfileManager {
             GroupManager.rearrange(groupId)
         }
     }
+
 
     fun getProfile(profileId: Long): ProxyEntity? {
         if (profileId == 0L) return null

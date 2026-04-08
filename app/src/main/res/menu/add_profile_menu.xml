@@ -110,6 +110,9 @@
                 android:id="@+id/action_connection_test_delete_unavailable"
                 android:title="@string/connection_test_delete_unavailable" />
             <item
+                android:id="@+id/action_test_page"
+                android:title="@string/test_page" />
+            <!-- <item
                 android:id="@+id/action_order"
                 android:title="@string/group_order">
                 <menu>
@@ -125,7 +128,7 @@
                             android:title="@string/group_order_by_delay" />
                     </group>
                 </menu>
-            </item>
+            </item> -->
         </menu>
     </item>
 

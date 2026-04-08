@@ -138,10 +138,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var globalCustomConfig by configurationStore.string(Key.GLOBAL_CUSTOM_CONFIG) { "" }
 
-    var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://dns.google/dns-query" }
-    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https://223.5.5.5/dns-query" }
+    var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://dns.quad9.net/dns-query" }
+    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https://77.88.8.8/dns-query" }
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
-    var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS) { true }
+    var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS) { false }
 
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
     var logLevel by configurationStore.stringToInt(Key.LOG_LEVEL)

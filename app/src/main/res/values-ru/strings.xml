@@ -363,7 +363,7 @@
 <string name="route_bypass_domain">Правило домена для %s</string>
 <string name="route_bypass_ip">Правило IP для %s</string>
 <string name="route_for">Правило для %s</string>
-<string name="route_manage_assets">Управление ресурсами маршрутов</string>
+<string name="route_manage_assets">Файлы ресурсов</string>
 <string name="route_name">Название маршрута</string>
 <string name="route_need_vpn">Правило маршрутизации `%s` зависит от VPN, поэтому игнорируется.</string>
 <string name="route_not_asset">Не файл ресурса: ожидался .db, а не %s</string>
@@ -376,8 +376,8 @@
 <string name="route_proxy">Прокси</string>
 <string name="route_reset">Сброс</string>
 <string name="route_rules_official">Официальный</string>
-<string name="route_rules_provider">Поставщик ресурсов правил</string>
-<string name="route_warn">Перед добавлением собственных правил убедитесь, что вы прочитали документацию, иначе подключение к Интернету может не удасться.</string>
+<string name="route_rules_provider">Поставщик файлов ресурсов правил</string>
+<string name="route_warn">Не забудьте обновить файл ресурсов - в правом верхнем углу на этой странице.</string>
 <string name="scanning">Сканирование…</string>
 <string name="search_apps">Поиск…</string>
 <string name="search_menu_title">Поиск</string>
@@ -492,4 +492,5 @@
 <string name="xtls_flow">Flow (подпротокол VLESS)</string>
 <string name="yes">Да</string>
     <string name="license_view">Открыть лицензию</string>
+    <string name="test_page">Проверить VPN</string>
 </resources>

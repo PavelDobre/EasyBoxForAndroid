@@ -75,6 +75,7 @@ import io.nekohasekai.sagernet.ktx.snackbar
 import io.nekohasekai.sagernet.ktx.startFilesForResult
 import io.nekohasekai.sagernet.ktx.tryToShow
 import io.nekohasekai.sagernet.plugin.PluginManager
+/*
 import io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity
@@ -88,6 +89,7 @@ import io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TuicSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.VMessSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.WireGuardSettingsActivity
+ */
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -100,9 +102,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import moe.matsuri.nb4a.Protocols
 import moe.matsuri.nb4a.Protocols.getProtocolColor
+/*
 import moe.matsuri.nb4a.proxy.anytls.AnyTLSSettingsActivity
 import moe.matsuri.nb4a.proxy.config.ConfigSettingActivity
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSSettingsActivity
+ */
 import moe.matsuri.nb4a.ui.ConnectionTestNotification
 import moe.matsuri.nb4a.utils.toBytesString
 import okhttp3.internal.closeQuietly
@@ -114,6 +118,10 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipInputStream
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.FrameLayout
 
 private val showAllProfilesMode = true
 class ConfigurationFragment @JvmOverloads constructor(
@@ -225,6 +233,69 @@ class ConfigurationFragment @JvmOverloads constructor(
         return Date(subscription.lastUpdated * 1000L).let { "${it.month + 1} - ${it.date}" }
     }
 
+    private fun showTestPageDialog() {
+        val context = requireContext()
+
+        val webView = WebView(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.loadsImagesAutomatically = true
+            settings.useWideViewPort = true
+            settings.loadWithOverviewMode = true
+
+            //webViewClient = WebViewClient()
+            webViewClient = object : WebViewClient() {
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+
+                    view?.postDelayed({
+                        view.evaluateJavascript(
+                            "window.scrollTo(0, document.body.scrollHeight);",
+                            null
+                        )
+                    }, 400)
+                }
+            }
+            webChromeClient = WebChromeClient()
+
+            loadUrl("https://site.dobre.pt")
+            //loadUrl("https://ipleak.net/")
+        }
+
+        val container = FrameLayout(context).apply {
+            val padding = (16 * resources.displayMetrics.density).toInt()
+            setPadding(padding, padding, padding, 0)
+            addView(
+                webView,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    (500 * resources.displayMetrics.density).toInt()
+                )
+            )
+        }
+
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle("Проверка VPN")
+            .setView(container)
+            .setNegativeButton("Close") { d, _ ->
+                webView.stopLoading()
+                webView.destroy()
+                d.dismiss()
+            }
+            .setOnDismissListener {
+                webView.stopLoading()
+                webView.destroy()
+            }
+            .create()
+
+        dialog.show()
+    }
+    /*
     private fun updateAllSubscriptions() {
         runOnLifecycleDispatcher {
             val groups = SagerDatabase.groupDao.allGroups()
@@ -242,6 +313,31 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
     }
+*/
+
+    private fun updateAllSubscriptions() {
+        runOnLifecycleDispatcher {
+            val groups = SagerDatabase.groupDao.allGroups()
+                .filter { it.type == GroupType.SUBSCRIPTION }
+                .filter { SagerDatabase.proxyDao.countByGroup(it.id) > 0 }
+
+            if (groups.isEmpty()) {
+                onMainDispatcher {
+                    snackbar(R.string.group_not_subscription).show()
+                }
+                return@runOnLifecycleDispatcher
+            }
+
+            groups.forEach { group ->
+                GroupUpdater.startUpdate(group, true)
+            }
+        }
+    }
+
+
+
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -291,9 +387,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             toolbar.menu.findItem(R.id.action_remove_duplicate)?.isVisible = false
             toolbar.menu.findItem(R.id.action_connection_tcp_ping)?.isVisible = false
             toolbar.menu.findItem(R.id.action_connection_url_test)?.isVisible = false
-            toolbar.menu.findItem(R.id.action_order_origin)?.isVisible = false
-            toolbar.menu.findItem(R.id.action_order_by_name)?.isVisible = false
-            toolbar.menu.findItem(R.id.action_order_by_delay)?.isVisible = false
+            //toolbar.menu.findItem(R.id.action_order_origin)?.isVisible = false
+            //toolbar.menu.findItem(R.id.action_order_by_name)?.isVisible = false
+            //toolbar.menu.findItem(R.id.action_order_by_delay)?.isVisible = false
         }
 
 
@@ -539,7 +635,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
-
+            R.id.action_test_page -> {
+                showTestPageDialog()
+            }
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
@@ -1122,18 +1220,19 @@ class ConfigurationFragment @JvmOverloads constructor(
             } else if (!::configurationListView.isInitialized) {
                 onViewCreated(requireView(), null)
             }
-            checkOrderMenu()
+            //checkOrderMenu()
             configurationListView.requestFocus()
         }
 
+        /*
         fun checkOrderMenu() {
             if (select || showAllProfiles) return
 
             val pf = requireParentFragment() as? ToolbarFragment ?: return
             val menu = pf.toolbar.menu
-            val origin = menu.findItem(R.id.action_order_origin)
-            val byName = menu.findItem(R.id.action_order_by_name)
-            val byDelay = menu.findItem(R.id.action_order_by_delay)
+            //val origin = menu.findItem(R.id.action_order_origin)
+            //val byName = menu.findItem(R.id.action_order_by_name)
+            //val byDelay = menu.findItem(R.id.action_order_by_delay)
             when (proxyGroup.order) {
                 GroupOrder.ORIGIN -> {
                     origin.isChecked = true
@@ -1172,6 +1271,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 true
             }
         }
+        */
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!showAllProfiles && !::proxyGroup.isInitialized) return
 
